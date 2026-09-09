@@ -3,280 +3,242 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#030207">
-<title>For Sarauniya ❤️</title>
+<title>Sarauniya — A Little Universe</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#020207}
-body{font-family:Georgia,"Times New Roman",serif;touch-action:manipulation}
-#stage{position:fixed;inset:0;background:#020207;overflow:hidden}
-canvas{position:absolute;inset:0;width:100%;height:100%}
-#scan,#vignette{position:absolute;inset:0;pointer-events:none}
-#scan{opacity:.10;background:repeating-linear-gradient(to bottom,transparent 0,transparent 3px,rgba(255,70,180,.08) 4px)}
-#vignette{background:radial-gradient(circle at 50% 47%,transparent 20%,rgba(0,0,0,.20) 55%,rgba(0,0,0,.92) 100%)}
-#corner{position:absolute;top:5%;left:50%;transform:translateX(-50%);font:9px Arial,sans-serif;letter-spacing:5px;color:#ffd9ee;opacity:.55;white-space:nowrap;text-transform:uppercase}
-#intro,#word,#finalHeart{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;pointer-events:none}
-#intro{opacity:0;flex-direction:column;text-shadow:0 0 25px #ff1493}
-#intro small{font:10px Arial,sans-serif;letter-spacing:7px;opacity:.65;margin-bottom:16px}
-#intro strong{font-size:clamp(38px,12vw,78px);font-weight:400;font-style:italic}
-#intro span{font:12px Arial,sans-serif;letter-spacing:3px;opacity:.65;margin-top:15px}
-#word{opacity:0;color:#fff;font-family:Arial,sans-serif;font-weight:700;font-size:clamp(58px,18vw,135px);letter-spacing:2px;text-shadow:0 0 8px #fff,0 0 25px rgba(255,80,190,.8)}
-#finalHeart{opacity:0;transition:1.8s}
-#finalHeart .inside{font:italic 22px Georgia,serif;color:#ffb5dc;text-shadow:0 0 12px #ff1493}
-#finalHeart .inside b{display:block;font-size:clamp(24px,7vw,42px);color:#fff;margin-top:5px}
-#continue{
- position:absolute;left:50%;bottom:8%;transform:translateX(-50%);
- padding:12px 23px;border:1px solid rgba(255,160,220,.55);border-radius:999px;
- background:rgba(255,0,150,.08);color:#fff;font:10px Arial,sans-serif;
- letter-spacing:3px;text-transform:uppercase;opacity:0;pointer-events:none;transition:1s;
- box-shadow:0 0 30px rgba(255,0,150,.13)
-}
-#continue.show{opacity:.9;pointer-events:auto}
-#letter{
- position:absolute;left:50%;top:52%;width:min(89%,450px);max-height:75vh;overflow:auto;
- transform:translate(-50%,-50%) scale(.82);opacity:0;pointer-events:none;
- padding:28px 22px;border:1px solid rgba(255,140,210,.30);border-radius:25px;
- background:rgba(8,2,12,.86);backdrop-filter:blur(15px);
- box-shadow:0 0 70px rgba(255,0,153,.18);text-align:center;color:#fff;
- transition:1.4s ease;scrollbar-width:none
-}
-#letter::-webkit-scrollbar{display:none}
-#letter.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
-#letter .arabic{font-size:21px;color:#ffe2f1;margin-bottom:11px}
-#letter h2{font-size:31px;font-weight:400;font-style:italic;margin:4px 0 14px}
-#letter .bar{width:48px;height:1px;background:#ff8bc9;margin:0 auto 17px}
-#letter p{font:14px/1.85 Arial,sans-serif;color:#f6dfeb;margin:0}
-#letter .sign{font:italic 16px Georgia,serif;color:#ffb8dd;margin-top:18px}
-#replay{position:absolute;bottom:3.5%;left:50%;transform:translateX(-50%);background:none;border:0;color:#fff;font:9px Arial;letter-spacing:3px;opacity:.45}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#010106}
+body{font-family:Arial,Helvetica,sans-serif;color:#fff}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+#blackout{position:fixed;inset:0;background:#010106;z-index:20;display:flex;align-items:center;justify-content:center;transition:opacity 1.5s}
+#blackout.off{opacity:0;pointer-events:none}
+#enter{text-align:center}
+#enter .line{width:80px;height:1px;background:#ff28a8;margin:0 auto 25px;box-shadow:0 0 18px #ff28a8}
+#enter h1{font:300 clamp(28px,9vw,58px) Georgia,serif;letter-spacing:8px;margin:0;text-shadow:0 0 30px #ff1598}
+#enter p{font-size:9px;letter-spacing:5px;color:#777;margin:18px 0 28px}
+button{background:none;border:1px solid rgba(255,52,176,.7);color:#fff;border-radius:100px;padding:13px 28px;font-size:9px;letter-spacing:4px}
+#top{position:fixed;top:7%;left:0;right:0;text-align:center;font-size:9px;letter-spacing:7px;color:#ffb8e5;opacity:0;transition:opacity 1s;z-index:5}
+#bottom{position:fixed;bottom:7%;left:0;right:0;text-align:center;opacity:0;z-index:5;transition:opacity 2s}
+#bottom strong{display:block;font:400 clamp(17px,5vw,29px) Georgia,serif;letter-spacing:3px;text-shadow:0 0 22px #ff1598}
+#bottom span{display:block;margin-top:12px;font-size:8px;letter-spacing:4px;color:#999}
 </style>
 </head>
 <body>
-<div id="stage">
 <canvas id="c"></canvas>
-<div id="scan"></div><div id="vignette"></div>
-<div id="corner">a little universe • made for you</div>
+<div id="top"></div>
+<div id="bottom"><strong>For my Sarauniya ♡</strong><span>some hearts are written in code. mine was written for you.</span></div>
 
-<div id="intro">
-  <small>for the girl who became my favourite place</small>
-  <strong>Sarauniya</strong>
-  <span>look closely… something is coming for you</span>
-</div>
-
-<div id="word">YOU</div>
-
-<div id="finalHeart">
-  <div class="inside">
-    I LOVE <b>YOU, SARAUNIYA</b>
+<div id="blackout">
+  <div id="enter">
+    <div class="line"></div>
+    <h1>SARAUNIYA</h1>
+    <p>A MESSAGE FROM MY UNIVERSE TO YOURS</p>
+    <button id="go">BEGIN</button>
   </div>
 </div>
 
-<button id="continue">Open My Heart</button>
-
-<section id="letter">
-  <div class="arabic">الحمد لله على نعمة وجودك</div>
-  <h2>My Sarauniya 🌙💜</h2>
-  <div class="bar"></div>
-  <p>
-    Out of all the little moments life could have given me,
-    I am grateful that one of them led me to you.
-    <br><br>
-    If I could put my feelings into stars, the sky would never
-    be dark again. If I could put them into words, this page
-    would never be long enough.
-    <br><br>
-    I pray Allah protects you, gives you peace, keeps your heart
-    close to Him, and guides us toward everything that is good
-    and halal.
-    <br><br>
-    And if Allah has written our story to continue,
-    I pray the day comes when we look back at this little
-    universe and smile because it was only the beginning.
-  </p>
-  <div class="sign">For my Sarauniya ta — always. 🤍</div>
-</section>
-<button id="replay">REPLAY</button>
-</div>
-
 <script>
-/* ==========================================================
-   SARAUNIYA — CINEMATIC CODE LOVE LETTER
-   One file. No libraries. No external assets.
-   ========================================================== */
-const c=document.getElementById("c"),x=c.getContext("2d");
-const intro=document.getElementById("intro"),word=document.getElementById("word");
-const finalHeart=document.getElementById("finalHeart"),continueBtn=document.getElementById("continue");
-const letter=document.getElementById("letter"),replay=document.getElementById("replay");
+const c=document.getElementById('c'),x=c.getContext('2d');
+let W,H,D=1;
+function size(){D=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;c.width=W*D;c.height=H*D;x.setTransform(D,0,0,D,0,0)}
+addEventListener('resize',size);size();
 
-let W,H,D=1,CX,CY,start=performance.now(),opened=false;
-let particles=[],matrix=[],heart=[],orbit=[];
-const words=["YOU","ARE","MY","LOVE"];
-
-function resize(){
- D=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;CX=W/2;CY=H*.48;
- c.width=W*D;c.height=H*D;x.setTransform(D,0,0,D,0,0);
-}
-addEventListener("resize",resize);resize();
+const glyphs="01{}[]<>/\\\\=+*#@$%:;ABCDEFGHIJKLMNOPQRSTUVWXYZ♡";
+const pink=["#ff1598","#ff38ad","#ff70c7","#ffa8df","#ffd9ef","#ffffff","#b60070"];
+let streams=[], dust=[], bits=[], targets=[];
+let active=false,stage=0,started=0;
 
 function rnd(a,b){return a+Math.random()*(b-a)}
-function ease(t){t=Math.max(0,Math.min(1,t));return t*t*(3-2*t)}
-
-function init(){
- particles=[];
- for(let i=0;i<1150;i++){
-   const a=rnd(0,Math.PI*2);
-   particles.push({a,r:Math.pow(Math.random(),.55),z:Math.random(),s:rnd(.35,2.1),pink:Math.random()<.68,p:rnd(0,6.28)});
+function makeStreams(){
+ streams=[];
+ for(let i=0;i<Math.ceil(W/11);i++){
+  streams.push({x:i*11+rnd(-2,2),y:rnd(-H,H),v:rnd(1,4.5),n:Math.floor(rnd(5,20)),a:rnd(.08,.42)})
  }
- matrix=[];
- const chars="LOVE♡<>/{}[]()01";
- for(let i=0;i<115;i++) matrix.push({
-   x:rnd(0,W),y:rnd(-H,H),v:rnd(.45,2.3),len:Math.floor(rnd(5,22)),alpha:rnd(.08,.42),ch:chars
+}
+makeStreams();
+
+for(let i=0;i<850;i++) dust.push({x:Math.random()*W,y:Math.random()*H,s:rnd(.5,1.7),a:rnd(.08,.5)});
+
+function pointsFromText(text,fs,step=5){
+ const q=document.createElement('canvas'),z=q.getContext('2d');
+ q.width=1000;q.height=260;
+ z.font=`900 ${fs}px Arial Black,Arial,sans-serif`;
+ z.textAlign='center';z.textBaseline='middle';z.fillStyle='#fff';
+ z.fillText(text,500,130);
+ let im=z.getImageData(0,0,q.width,q.height).data,p=[];
+ for(let yy=0;yy<q.height;yy+=step)for(let xx=0;xx<q.width;xx+=step){
+  if(im[(yy*q.width+xx)*4+3]>100)p.push({x:xx-500,y:yy-130});
+ }
+ return p;
+}
+
+/* A heart made from tiny CODE GLYPHS — no bubbles/circles. */
+function heartPoints(){
+ let p=[], scale=Math.min(W,H)/44;
+ for(let i=0;i<2700;i++){
+  let t=Math.random()*Math.PI*2, r=Math.sqrt(Math.random());
+  let xx=16*Math.sin(t)**3, yy=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+  p.push({x:xx*scale*r,y:yy*scale*r});
+ }
+ return p;
+}
+
+function targetsFor(name){
+ if(name==="YOU")return pointsFromText("YOU",145,5);
+ if(name==="ARE")return pointsFromText("ARE",145,5);
+ if(name==="MY")return pointsFromText("MY",150,5);
+ if(name==="LOVE")return pointsFromText("LOVE",125,5);
+ if(name==="SARAUNIYA")return pointsFromText("SARAUNIYA",66,4);
+ if(name==="HEART")return heartPoints();
+ return [];
+}
+
+function createBits(){
+ bits=[];
+ for(let i=0;i<3100;i++){
+  bits.push({
+   x:rnd(-W*.1,W*1.1),y:rnd(-H*.1,H*1.1),
+   tx:W/2,ty:H/2,vx:rnd(-.4,.4),vy:rnd(-.4,.4),
+   size:rnd(2.5,5.5),char:glyphs[(Math.random()*glyphs.length)|0],
+   col:pink[(Math.random()*pink.length)|0],alpha:rnd(.35,1)
+  });
+ }
+}
+
+function explode(){
+ for(const b of bits){
+  let a=Math.random()*Math.PI*2,r=rnd(30,Math.max(W,H)*.75);
+  b.x=W/2+Math.cos(a)*r;b.y=H/2+Math.sin(a)*r*.7;
+ }
+}
+
+function setFormation(name){
+ targets=targetsFor(name);
+ if(!bits.length)createBits();
+ bits.forEach((b,i)=>{
+  const q=targets[i%targets.length];
+  b.tx=W/2+q.x;b.ty=H/2+q.y;
+  b.char=glyphs[(Math.random()*glyphs.length)|0];
  });
- heart=[];
- for(let i=0;i<1200;i++){
-   let t=Math.random()*Math.PI*2;
-   let xx=16*Math.sin(t)**3, yy=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
-   let inside=Math.pow(Math.random(),.56);
-   heart.push({t,xx:xx*inside,yy:yy*inside,s:rnd(.35,1.8),p:rnd(0,6.28)});
- }
- orbit=words.map((t,i)=>({t,a:i*Math.PI/2,r:rnd(190,260),speed:rnd(.00012,.00022)*(i%2?-1:1)}));
-}
-init();
-
-function bg(){
- x.fillStyle="rgba(2,2,7,.30)";x.fillRect(0,0,W,H);
- // code rain — matching the reference aesthetic
- x.font="9px monospace";x.textBaseline="top";
- for(const m of matrix){
-   m.y+=m.v;
-   if(m.y>H+80){m.y=-rnd(30,220);m.x=rnd(0,W)}
-   for(let j=0;j<m.len;j++){
-     let a=m.alpha*(1-j/m.len);
-     x.fillStyle=`rgba(255,${60+Math.floor(j*3)},${150+Math.floor(j*4)},${a})`;
-     x.fillText(m.ch[(j+Math.floor(m.y/8))%m.ch.length],m.x,m.y-j*9);
-   }
- }
 }
 
-function starfield(t,prog){
- for(const p of particles){
-   let z=(p.z+prog*2.6)%1;
-   let r=(12+p.r*Math.min(W,H)*.88)*z;
-   let px=CX+Math.cos(p.a)*r,py=CY+Math.sin(p.a)*r*.68;
-   let sz=p.s*(.35+z*4.8),a=Math.min(1,z*2.5)*(.55+.45*Math.sin(t*.006+p.p));
-   x.fillStyle=p.pink?`rgba(255,${70+Math.floor(a*90)},${170+Math.floor(a*80)},${a})`:`rgba(255,255,255,${a})`;
-   x.beginPath();x.arc(px,py,sz,0,Math.PI*2);x.fill();
-   if(z>.78){
-     x.globalAlpha=a*.24;x.strokeStyle="#ff43ae";x.lineWidth=Math.max(.4,sz*.4);
-     x.beginPath();x.moveTo(CX+(px-CX)*.62,CY+(py-CY)*.62);x.lineTo(px,py);x.stroke();x.globalAlpha=1;
-   }
+function background(t){
+ x.fillStyle='#010106';x.fillRect(0,0,W,H);
+
+ // Matrix/code rain. Tiny rectangular glyphs, never bubbles.
+ x.font='8px monospace';
+ for(const s of streams){
+  s.y+=s.v;if(s.y>H+180)s.y=-rnd(20,300);
+  for(let j=0;j<s.n;j++){
+   let yy=s.y-j*11;if(yy<0||yy>H)continue;
+   let ch=glyphs[(Math.random()*glyphs.length)|0];
+   x.fillStyle=Math.random()<.15?'rgba(255,120,210,.55)':`rgba(255,20,145,${s.a*(1-j/s.n)})`;
+   x.fillText(ch,s.x,yy);
+  }
  }
- const g=x.createRadialGradient(CX,CY,0,CX,CY,85);
- g.addColorStop(0,"#fff");g.addColorStop(.05,"#ffd7ed");g.addColorStop(.2,"rgba(255,40,175,.85)");g.addColorStop(1,"rgba(255,0,150,0)");
- x.fillStyle=g;x.beginPath();x.arc(CX,CY,85,0,Math.PI*2);x.fill();
+
+ for(const d of dust){
+  d.y+=.05;
+  if(d.y>H)d.y=0;
+  x.fillStyle=`rgba(255,90,190,${d.a})`;
+  x.fillRect(d.x,d.y,d.s,d.s);
+ }
+
+ // faint horizon/glow, no circular particle effects
+ let g=x.createLinearGradient(0,H*.35,0,H*.72);
+ g.addColorStop(0,'rgba(255,0,140,0)');
+ g.addColorStop(.5,'rgba(255,0,140,.035)');
+ g.addColorStop(1,'rgba(255,0,140,0)');
+ x.fillStyle=g;x.fillRect(0,0,W,H);
 }
 
-function galaxy(t,amount=1){
- const spin=t*.0005;
- for(let i=0;i<1500;i++){
-   let q=i/1500,a=q*22+spin+(i%2?Math.PI:0);
-   let r=(5+q*Math.min(W,H)*.39)*amount;
-   let px=CX+Math.cos(a)*r,py=CY+Math.sin(a)*r*.27;
-   x.fillStyle=i%11===0?`rgba(255,255,255,${.75*(1-q)})`:`rgba(255,45,183,${.58*(1-q)})`;
-   x.beginPath();x.arc(px,py,rnd(.3,1.7),0,Math.PI*2);x.fill();
+function formation(t){
+ for(let i=0;i<bits.length;i++){
+  let b=bits[i],dx=b.tx-b.x,dy=b.ty-b.y;
+  b.x+=dx*.065;b.y+=dy*.065;
+  let jitter=Math.sin(t*.002+i)*.25;
+  x.font=`700 ${b.size}px monospace`;
+  x.textAlign='center';x.textBaseline='middle';
+  x.fillStyle=b.col;x.globalAlpha=b.alpha;
+  x.shadowBlur=7;x.shadowColor=b.col;
+  x.fillText(b.char,b.x+jitter,b.y);
  }
- x.save();x.translate(CX,CY);
- for(let i=0;i<8;i++){
-   x.beginPath();x.ellipse(0,0,38+i*15,9+i*3,t*.00025+i*.08,0,Math.PI*2);
-   x.strokeStyle=`rgba(255,75,195,${.18-.012*i})`;x.lineWidth=1;x.stroke();
+ x.globalAlpha=1;x.shadowBlur=0;
+}
+
+function cinematicHeart(t){
+ // sweeping rings made from dashes/glyphs, inspired by the reference's spinning surface
+ const cx=W/2,cy=H/2;
+ x.save();x.translate(cx,cy);x.globalCompositeOperation='lighter';
+ for(let ring=0;ring<7;ring++){
+  let rx=Math.min(W,H)*(.13+ring*.075),ry=rx*.22;
+  for(let k=0;k<80;k++){
+   let a=k/80*Math.PI*2+t*.00035*(ring%2?1:-1);
+   let px=Math.cos(a)*rx,py=Math.sin(a)*ry;
+   x.font='6px monospace';x.fillStyle=`rgba(255,30,160,${.12-ring*.01})`;
+   x.fillText(k%3===0?'0':'+',px,py);
+  }
  }
+ // central dark aperture
+ x.fillStyle='#000';x.beginPath();x.ellipse(0,0,Math.min(W,H)*.035,Math.min(W,H)*.018,0,0,Math.PI*2);x.fill();
+ x.strokeStyle='rgba(255,90,205,.8)';x.lineWidth=2;
+ x.beginPath();x.ellipse(0,0,Math.min(W,H)*.045,Math.min(W,H)*.023,0,0,Math.PI*2);x.stroke();
  x.restore();
- const g=x.createRadialGradient(CX,CY,0,CX,CY,110);
- g.addColorStop(0,"#fff");g.addColorStop(.06,"#ffd9f0");g.addColorStop(.16,"rgba(255,70,198,.9)");
- g.addColorStop(.48,"rgba(255,0,150,.17)");g.addColorStop(1,"rgba(255,0,150,0)");
- x.fillStyle=g;x.beginPath();x.arc(CX,CY,110,0,Math.PI*2);x.fill();
 }
 
-function heartShape(t,prog,complete=true){
- let scale=Math.min(W,H)/570;
- let n=Math.floor(1200*ease(prog));
- // outline / interior particles
- for(let i=0;i<n;i++){
-   const h=heart[i],px=h.xx*scale,py=h.yy*scale;
-   const wob=Math.sin(t*.004+h.p)*.8;
-   x.fillStyle=i%17===0?"rgba(255,250,253,.96)":"rgba(255,75,190,.82)";
-   x.beginPath();x.arc(CX+px+wob,CY-15+py+wob,h.s,0,Math.PI*2);x.fill();
- }
- // bright heart contour
- x.save();x.translate(CX,CY-15);x.beginPath();
- for(let i=0;i<=280;i++){
-   let tt=i/280*Math.PI*2,xx=16*Math.sin(tt)**3*scale;
-   let yy=-(13*Math.cos(tt)-5*Math.cos(2*tt)-2*Math.cos(3*tt)-Math.cos(4*tt))*scale;
-   i?x.lineTo(xx,yy):x.moveTo(xx,yy);
- }
- x.strokeStyle="rgba(255,145,220,.72)";x.lineWidth=1.5;x.shadowBlur=24;x.shadowColor="#ff159b";x.stroke();x.restore();
- if(complete){
-   // orbiting text
-   x.textAlign="center";x.textBaseline="middle";
-   orbit.forEach((o,i)=>{
-     o.a+=o.speed*16;let a=o.a+t*.00028;
-     let px=CX+Math.cos(a)*o.r,py=CY-15+Math.sin(a)*o.r*.33;
-     x.save();x.translate(px,py);x.rotate(Math.atan2(Math.sin(a)*.33,Math.cos(a)));
-     x.font="700 "+Math.max(11,Math.min(17,W/28))+"px Arial";
-     x.fillStyle=i===0?"#fff":"#ffafd9";x.shadowBlur=10;x.shadowColor="#ff1493";
-     x.fillText(o.t,0,0);x.restore();
-   });
- }
+function finalScene(t){
+ // turn the code-heart into a more graphic, elegant emblem
+ cinematicHeart(t);
+ x.save();x.textAlign='center';x.textBaseline='middle';
+ x.font=`600 ${Math.max(14,Math.min(W,H)*.032)}px Georgia,serif`;
+ x.fillStyle='#fff';x.shadowBlur=20;x.shadowColor='#ff1598';
+ x.fillText('I LOVE YOU, SARAUNIYA',W/2,H/2);
+ x.font=`${Math.max(8,Math.min(W,H)*.014)}px Arial`;
+ x.fillStyle='#ff9bd8';x.shadowBlur=8;
+ x.fillText('MY QUEEN  •  MY PEACE  •  MY HOME',W/2,H/2+29);
+ x.restore();
 }
 
-function showLetter(){
- if(opened)return;opened=true;continueBtn.classList.remove("show");letter.classList.add("show");
+const seq=[
+ {name:'YOU',label:'I COULD WRITE A THOUSAND WORDS',dur:2500},
+ {name:'ARE',label:'AND STILL MISS THE ONE THAT MATTERS',dur:2400},
+ {name:'MY',label:'BECAUSE SOMEHOW',dur:2300},
+ {name:'LOVE',label:'YOU BECAME THE WORD',dur:3300},
+ {name:'HEART',label:'THAT MY HEART KEEPS DRAWING',dur:5400},
+ {name:'SARAUNIYA',label:'AND THIS ONE HAS YOUR NAME',dur:4000}
+];
+
+function begin(){
+ active=true;stage=0;started=performance.now();createBits();explode();
+ document.getElementById('blackout').classList.add('off');
+ document.getElementById('top').style.opacity='.7';
+ document.getElementById('top').textContent=seq[0].label;
+ setFormation(seq[0].name);
 }
 
 function loop(t){
- requestAnimationFrame(loop);
- let e=t-start;
- x.fillStyle="rgba(2,2,7,.34)";x.fillRect(0,0,W,H);bg();
-
- // 0–2.6s: quiet code rain + intro
- if(e<2600){
-   let a=e<700?ease(e/700):e<1900?1:1-ease((e-1900)/700);
-   intro.style.opacity=a;
- }
- // 2.6–6.8s: stars fly toward viewer
- if(e>=2300 && e<7000){
-   let p=ease((e-2300)/4300);starfield(t,p);
-   if(e<3900) word.style.opacity=0;
- }
- // 6.8–8.0s: one word at a time
- if(e>=6500 && e<9200){
-   galaxy(t,Math.min(1,(e-6500)/1500));
-   let idx=Math.floor((e-6500)/650)%4;
-   let local=((e-6500)%650)/650;
-   word.textContent=words[idx];
-   word.style.opacity=local<.18?ease(local/.18):local>.82?1-ease((local-.82)/.18):1;
- }
- // 9.0–12.8s: words settle, galaxy becomes heart
- if(e>=9000 && e<13100){
-   galaxy(t,1);
-   word.style.opacity=0;
-   let p=ease((e-9000)/2300);
-   heartShape(t,p,false);
-   if(e>11200){
-     finalHeart.style.opacity=Math.min(1,(e-11200)/1100);
+ background(t);
+ if(active){
+  let elapsed=t-started;
+  if(elapsed>seq[stage].dur){
+   stage++;
+   if(stage<seq.length){
+    started=t;
+    document.getElementById('top').textContent=seq[stage].label;
+    setFormation(seq[stage].name);
+   }else{
+    document.getElementById('top').style.opacity='0';
+    setFormation('HEART');
+    document.getElementById('bottom').style.opacity='1';
    }
+  }
+  formation(t);
+  if(stage>=4)cinematicHeart(t);
+  if(stage>=seq.length)finalScene(t);
  }
- // 12.8s onward: final heart + orbiting phrases
- if(e>=12600){
-   galaxy(t,1);heartShape(t,1,true);
-   finalHeart.style.opacity=1;
-   if(!opened)continueBtn.classList.add("show");
- }
+ requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
-
-continueBtn.addEventListener("click",showLetter);
-c.addEventListener("click",()=>{if(!opened && performance.now()-start>9000)showLetter()});
-replay.addEventListener("click",()=>{opened=false;letter.classList.remove("show");continueBtn.classList.remove("show");finalHeart.style.opacity=0;start=performance.now()});
+document.getElementById('go').onclick=begin;
 </script>
 </body>
 </html>
