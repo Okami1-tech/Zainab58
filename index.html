@@ -39,7 +39,7 @@ button{background:none;border:1px solid rgba(255,52,176,.7);color:#fff;border-ra
 <script>
 const c=document.getElementById('c'),x=c.getContext('2d');
 let W,H,D=1;
-function size(){D=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;c.width=W*D;c.height=H*D;x.setTransform(D,0,0,D,0,0)}
+function size(){D=Math.min(devicePixelRatio||1,1.5);W=innerWidth;H=innerHeight;c.width=W*D;c.height=H*D;x.setTransform(D,0,0,D,0,0)}
 addEventListener('resize',size);size();
 
 const glyphs="01{}[]<>/\\\\=+*#@$%:;ABCDEFGHIJKLMNOPQRSTUVWXYZ♡";
@@ -50,13 +50,13 @@ let active=false,stage=0,started=0;
 function rnd(a,b){return a+Math.random()*(b-a)}
 function makeStreams(){
  streams=[];
- for(let i=0;i<Math.ceil(W/11);i++){
+ for(let i=0;i<Math.ceil(W/15);i++){
   streams.push({x:i*11+rnd(-2,2),y:rnd(-H,H),v:rnd(1,4.5),n:Math.floor(rnd(5,20)),a:rnd(.08,.42)})
  }
 }
 makeStreams();
 
-for(let i=0;i<850;i++) dust.push({x:Math.random()*W,y:Math.random()*H,s:rnd(.5,1.7),a:rnd(.08,.5)});
+for(let i=0;i<220;i++) dust.push({x:Math.random()*W,y:Math.random()*H,s:rnd(.5,1.7),a:rnd(.08,.5)});
 
 function pointsFromText(text,fs,step=5){
  const q=document.createElement('canvas'),z=q.getContext('2d');
@@ -74,7 +74,7 @@ function pointsFromText(text,fs,step=5){
 /* A heart made from tiny CODE GLYPHS — no bubbles/circles. */
 function heartPoints(){
  let p=[], scale=Math.min(W,H)/44;
- for(let i=0;i<2700;i++){
+ for(let i=0;i<900;i++){
   let t=Math.random()*Math.PI*2, r=Math.sqrt(Math.random());
   let xx=16*Math.sin(t)**3, yy=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
   p.push({x:xx*scale*r,y:yy*scale*r});
@@ -82,24 +82,49 @@ function heartPoints(){
  return p;
 }
 
+const targetCache={};
 function targetsFor(name){
- if(name==="YOU")return pointsFromText("YOU",145,5);
- if(name==="ARE")return pointsFromText("ARE",145,5);
- if(name==="MY")return pointsFromText("MY",150,5);
- if(name==="LOVE")return pointsFromText("LOVE",125,5);
- if(name==="SARAUNIYA")return pointsFromText("SARAUNIYA",66,4);
- if(name==="HEART")return heartPoints();
- return [];
+ if(targetCache[name]) return targetCache[name];
+ let p=[];
+ if(name==="YOU")p=pointsFromText("YOU",145,5);
+ if(name==="ARE")p=pointsFromText("ARE",145,5);
+ if(name==="MY")p=pointsFromText("MY",150,5);
+ if(name==="LOVE")p=pointsFromText("LOVE",125,5);
+ if(name==="SARAUNIYA")p=pointsFromText("SARAUNIYA",66,4);
+ if(name==="HEART")p=heartPoints();
+ targetCache[name]=p;
+ return p;
+}
+
+const spriteCanvas=document.createElement('canvas');
+const spriteCtx=spriteCanvas.getContext('2d');
+const spriteMap=new Map();
+
+function getSprite(ch,col,size){
+ const key=ch+'|'+col+'|'+Math.round(size);
+ if(spriteMap.has(key)) return spriteMap.get(key);
+ const s=Math.ceil(size*2.8);
+ const cv=document.createElement('canvas'); cv.width=s; cv.height=s;
+ const q=cv.getContext('2d');
+ q.font=`700 ${size}px monospace`;
+ q.textAlign='center'; q.textBaseline='middle';
+ q.fillStyle=col;
+ q.fillText(ch,s/2,s/2);
+ spriteMap.set(key,cv);
+ return cv;
 }
 
 function createBits(){
  bits=[];
- for(let i=0;i<3100;i++){
+ for(let i=0;i<900;i++){
+  const size=rnd(2.5,5);
+  const char=glyphs[(Math.random()*glyphs.length)|0];
+  const col=pink[(Math.random()*pink.length)|0];
   bits.push({
    x:rnd(-W*.1,W*1.1),y:rnd(-H*.1,H*1.1),
    tx:W/2,ty:H/2,vx:rnd(-.4,.4),vy:rnd(-.4,.4),
-   size:rnd(2.5,5.5),char:glyphs[(Math.random()*glyphs.length)|0],
-   col:pink[(Math.random()*pink.length)|0],alpha:rnd(.35,1)
+   size,char,col,alpha:rnd(.35,1),
+   sprite:getSprite(char,col,size)
   });
  }
 }
@@ -128,7 +153,7 @@ function background(t){
  x.font='8px monospace';
  for(const s of streams){
   s.y+=s.v;if(s.y>H+180)s.y=-rnd(20,300);
-  for(let j=0;j<s.n;j++){
+  for(let j=0;j<Math.min(s.n,12);j++){
    let yy=s.y-j*11;if(yy<0||yy>H)continue;
    let ch=glyphs[(Math.random()*glyphs.length)|0];
    x.fillStyle=Math.random()<.15?'rgba(255,120,210,.55)':`rgba(255,20,145,${s.a*(1-j/s.n)})`;
@@ -156,22 +181,20 @@ function formation(t){
   let b=bits[i],dx=b.tx-b.x,dy=b.ty-b.y;
   b.x+=dx*.065;b.y+=dy*.065;
   let jitter=Math.sin(t*.002+i)*.25;
-  x.font=`700 ${b.size}px monospace`;
-  x.textAlign='center';x.textBaseline='middle';
-  x.fillStyle=b.col;x.globalAlpha=b.alpha;
-  x.shadowBlur=7;x.shadowColor=b.col;
-  x.fillText(b.char,b.x+jitter,b.y);
+  x.globalAlpha=b.alpha;
+  const s=b.sprite;
+  x.drawImage(s,b.x-s.width/2+jitter,b.y-s.height/2);
  }
- x.globalAlpha=1;x.shadowBlur=0;
+ x.globalAlpha=1;
 }
 
 function cinematicHeart(t){
  // sweeping rings made from dashes/glyphs, inspired by the reference's spinning surface
  const cx=W/2,cy=H/2;
  x.save();x.translate(cx,cy);x.globalCompositeOperation='lighter';
- for(let ring=0;ring<7;ring++){
+ for(let ring=0;ring<5;ring++){
   let rx=Math.min(W,H)*(.13+ring*.075),ry=rx*.22;
-  for(let k=0;k<80;k++){
+  for(let k=0;k<42;k++){
    let a=k/80*Math.PI*2+t*.00035*(ring%2?1:-1);
    let px=Math.cos(a)*rx,py=Math.sin(a)*ry;
    x.font='6px monospace';x.fillStyle=`rgba(255,30,160,${.12-ring*.01})`;
@@ -190,10 +213,10 @@ function finalScene(t){
  cinematicHeart(t);
  x.save();x.textAlign='center';x.textBaseline='middle';
  x.font=`600 ${Math.max(14,Math.min(W,H)*.032)}px Georgia,serif`;
- x.fillStyle='#fff';x.shadowBlur=20;x.shadowColor='#ff1598';
+ x.fillStyle='#fff';
  x.fillText('I LOVE YOU, SARAUNIYA',W/2,H/2);
  x.font=`${Math.max(8,Math.min(W,H)*.014)}px Arial`;
- x.fillStyle='#ff9bd8';x.shadowBlur=8;
+ x.fillStyle='#ff9bd8';
  x.fillText('MY QUEEN  •  MY PEACE  •  MY HOME',W/2,H/2+29);
  x.restore();
 }
